@@ -10,13 +10,13 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "kohnotes.db";
     private static final int DB_VER = 1;
 
+    //  Constants for table
     public static final String NOTE_TEXT = "noteText";
     private static final String NOTE_ID = "_id";
-    //  Constants for table
     static final String TABLE_NAME = "notes";
     static final String NOTE_TIME_STAMP = "noteTimeStamp";
 
-    public static final String[] ALL_COLUMNS = {NOTE_ID, NOTE_TEXT, NOTE_TIME_STAMP};
+    static final String[] ALL_COLUMNS = {NOTE_ID, NOTE_TEXT, NOTE_TIME_STAMP};
 
     //  SQL Query for creating notes table
     private static final String CREATE_TABLE =

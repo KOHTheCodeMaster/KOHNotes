@@ -1,6 +1,7 @@
 package dev.koh.kohnotes;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,11 +10,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import dev.koh.kohnotes.db.DBOpenHelper;
 import dev.koh.kohnotes.db.NotesProvider;
@@ -29,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         String note1 = "Hello World..!! ^__^";
-        addNewNote(note1);
+//        addNewNote(note1);
 
         init();
 
@@ -63,6 +68,71 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.kebab_menu_hp, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+
+            case R.id.idCreateSampleNotesKebabMenuHP:
+                addNewNote("Sample Note #1");
+                addNewNote("Sample Note #2\nAbCdEf...XyZ");
+                addNewNote("Sample Note #3\nAbCdEf...XyZ\n" +
+                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+
+                restartLoader();
+
+                break;
+
+            case R.id.idDeleteAllKebabMenuHP:
+                deleteAllNotes();
+                break;
+            default:
+                Log.d(LOG_TAG, "<onOptionsItemSelected> Kebab Options Menu Clicked");
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void displayToastMsg(String msg) {
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void restartLoader() {
+        LoaderManager.getInstance(this).restartLoader(0, null, this);
+    }
+
+    private void deleteAllNotes() {
+
+        DialogInterface.OnClickListener onDeleteAllNotesClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+
+                    getContentResolver().delete(NotesProvider.CONTENT_URI,
+                            null, null);
+
+                    restartLoader();
+                    displayToastMsg("Deleted All Notes!");
+
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.delete_all_prompt));
+        builder.setPositiveButton(android.R.string.yes, onDeleteAllNotesClickListener);
+        builder.setNegativeButton(android.R.string.no, onDeleteAllNotesClickListener);
+        builder.show();
+
+    }
+
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
@@ -84,9 +154,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 /*
  *  Date Created : 9th July 2K19, 09:30 PM..!!
- *  Last Updated : 11th July 2K19, 04:04 PM..!!
+ *  Last Updated : 11th July 2K19, 06:28 PM..!!
  *
  *  Change Log:
+ *  <| ================================================================ |>
+ *
+ *  5th Commit - [Kebab Menu Added]
+ *  1. Create Sample Notes
+ *  2. Delete All Notes
+ *
  *  <| ================================================================ |>
  *
  *  4th Commit - [LoaderManager - Async DB Requests]
